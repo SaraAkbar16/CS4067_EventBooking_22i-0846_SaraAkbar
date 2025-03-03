@@ -4,68 +4,132 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event Registration</title>
-    <link rel="stylesheet" href="/static/style2.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f5f5dc; /* Beige background */
+            color: #4b3832; /* Dark brown text for contrast */
+            margin: 50px;
+        }
+
+        h1 {
+            color: #4b3832;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: inline-block;
+            text-align: left;
+            background-color: #fffaf0; /* Light beige form background */
+            padding: 20px;
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow */
+        }
+
+        label {
+            font-size: 1.1em;
+            color: #6d4b3b; /* Darker beige for labels */
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        input {
+            padding: 8px;
+            margin: 10px 0;
+            border: 1px solid #8b7765; /* Soft brown border */
+            background-color: #fffaf0; /* Light beige input background */
+            width: 100%;
+            font-size: 1em;
+        }
+
+        input:focus {
+            border-color: #ffb74d; /* Orange border on focus */
+            outline: none;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #8b5e3c; /* Warm brown button */
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #654321; /* Darker brown on hover */
+        }
+
+        button:active {
+            background-color: #fbc02d; /* Darker yellow when clicked */
+        }
+
+        table {
+            margin: auto;
+            border-collapse: collapse;
+            background-color: #fff8dc; /* Light beige table */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #8b7765; /* Soft brown border */
+        }
+
+        th {
+            background-color: #deb887; /* Medium beige for headers */
+            color: white;
+        }
+
+        td {
+            background-color: #f5deb3; /* Lighter beige for rows */
+        }
+    </style>
 </head>
 <body>
     <h1>Event Registration</h1>
 
     <!-- Event Registration Form -->
-    <form id="eventForm" action="/submit/" method="POST">
+    <form id="eventForm">
         <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required><br>
+        <input type="text" id="name" name="name" required>
 
         <label for="payment">Payment:</label>
-        <input type="number" id="payment" name="payment" min="1000" step="500" required><br>
+        <input type="number" id="payment" name="payment" min="1000" step="500" required>
 
         <label for="event">Event:</label>
-        <input type="number" id="event" name="event" placeholder="Enter event ID" required><br>
+        <input type="number" id="event" name="event" placeholder="Enter event ID" required>
+
         <p>Event ID: {{ event_ids }}</p>
         <button type="submit">Submit</button>
     </form>
 
-    <!-- JavaScript to handle form submission and prevent page refresh -->
     <script>
-      document.getElementById("eventForm").addEventListener("submit", function(event) {
-    event.preventDefault();  // Prevent form refresh
-
-    // Collect form data into an object
-    let formData = {
-        name: document.getElementById("name").value,
-        payment: document.getElementById("payment").value,
-        event: document.getElementById("event").value
-    };
-
-    // Send the data to the backend as JSON
-    fetch("/submit_form/", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json"  // Set content type as JSON
-    },
-    body: JSON.stringify(formData)  // Convert object to JSON clstring
-})
-.then(response => response.json())  // Convert the response to JSON
-.then(data => {
-    if (data.success) {
-        // Success response handling
-        alert("🎉 Booking saved successfully!\n" + 
-              "Name: " + data.data.name + "\n" + 
-              "Payment: " + data.data.payment + "\n" + 
-              "Event ID: " + data.data.event);
-        document.getElementById("eventForm").reset();  // Reset the form
-    } else {
-        // Error response handling
-        alert("❌ Error saving booking: " + data.message);
-    }
-})
-.catch(error => {
-    // Catch any error during the fetch operation
-    console.error("Error:", error);
-    alert("❌ Error submitting the form.");
-});
-});
-
-
-
-    </script>
+        document.getElementById("eventForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+        
+            let formData = {
+                name: document.getElementById("name").value,
+                payment: parseInt(document.getElementById("payment").value),
+                event: parseInt(document.getElementById("event").value)
+            };
+        
+            let response = await fetch("/submit/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData)
+            });
+        
+            let result = await response.json();
+            alert(result.success ? "Booking successful!" : "Error: " + result.message);
+        });
+        </script>
+        
 </body>
 </html>

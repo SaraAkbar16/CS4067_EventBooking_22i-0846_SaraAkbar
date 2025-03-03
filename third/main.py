@@ -1,87 +1,65 @@
-import os
-import asyncpg
-from fastapi import FastAPI, Request, Form, HTTPException
+from fastapi import FastAPI, Request, Depends
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
-from fastapi.staticfiles import StaticFiles
-from contextlib import asynccontextmanager
 from pydantic import BaseModel
+from sqlalchemy.ext.asyncio import AsyncSession
+from third.database import SessionLocal, Booking, init_db
+
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-templates = Jinja2Templates(directory=os.path.join(os.getcwd(), "templates"))
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "static"))
-app.mount("/static", StaticFiles(directory=static_dir), name="static")
+templates = Jinja2Templates(directory="templates")
 
-DATABASE_URL = "postgresql://postgres:sara2020@localhost/users"
+# Ensure database tables are created
+@app.on_event("startup")
+async def startup_event():
+    await init_db()
 
-async def create_pool():
-    return await asyncpg.create_pool(DATABASE_URL)
+# Dependency to get database session
+async def get_db():
+    async with SessionLocal() as session:
+        yield session
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    global db_pool
-    db_pool = await create_pool()
-    print("Database connection established!")
-    yield
-    await db_pool.close()
-    print("Database connection closed.")
-
-app = FastAPI(lifespan=lifespan)
-
-@app.get("/", response_class=HTMLResponse)
-async def home(request: Request):
-    return templates.TemplateResponse("index2.html", {"request": request})
-
-class Booking(BaseModel):
-    id: int
+# Pydantic model for request body
+class BookingRequest(BaseModel):
     name: str
-    payment: int 
+    payment: int
     event: int
-# Correctly use the pool to get a connection
-async def get_db_connection():
-    async with db_pool.acquire() as conn:
-        return conn
 
-@app.post("/submit_form/")
-async def submit_form(booking: Booking):
+@app.get("/")
+async def serve_form(request: Request):
+    event_ids = [1, 2, 3]  
+    return templates.TemplateResponse("index2.html", {"request": request, "event_ids": event_ids})
+
+@app.post("/submit/")
+async def submit_form(booking: BookingRequest, db: AsyncSession = Depends(get_db)):
     try:
-        # Get the database connection from the pool
-        conn = await get_db_connection()
+        new_booking = Booking(
+            name=booking.name,
+            payment=booking.payment,
+            event=booking.event
+        )
+        db.add(new_booking)
+        await db.commit()
+        await db.refresh(new_booking)
 
-        # Insert the booking into the database
-        query = """INSERT INTO bookings (name, payment, event) 
-                   VALUES ($1, $2, $3) RETURNING id"""
-        
-        # Log the query and data being inserted for debugging
-        print(f"Executing query: {query} with values: {booking.name}, {booking.payment}, {booking.event}")
-
-        result = await conn.fetch(query, booking.name, booking.payment, booking.event)
-        
-        # Log the result to confirm if the ID is returned correctly
-        print(f"Inserted booking with ID: {result[0]['id']}")
-
-        # Commit the changes (auto-committed with asyncpg, so this isn't needed)
-        await conn.close()
-
-        # Return success with the booking data and generated ID
-        return JSONResponse(content={
+        return {
             "success": True,
             "data": {
-                "id": result[0]["id"],
+                "id": new_booking.id,
                 "name": booking.name,
                 "payment": booking.payment,
                 "event": booking.event
             }
-        })
+        }
+
     except Exception as e:
-        # Log the full exception for better debugging
-        print(f"Error occurred: {str(e)}")
-        return JSONResponse(
-            status_code=500,
-            content={
-                "success": False,
-                "message": f"Error saving booking to database: {str(e)}"
-            }
-        )
+        return {"success": False, "message": str(e)}

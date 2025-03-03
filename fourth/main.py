@@ -1,40 +1,45 @@
-from flask import Flask, request, jsonify
+from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.templating import Jinja2Templates
+from fastapi import Request
 from pymongo import MongoClient
-from datetime import datetime
+import uvicorn
 
-app = Flask(__name__)
+app = FastAPI()
+
+# Enable CORS for frontend access
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Connect to MongoDB
 client = MongoClient("mongodb://localhost:27017/")
-db = client.notification_db
-notifications = db.notifications
+db = client["sms"]
+collection = db["sms"]
 
-@app.route("/send_notification", methods=["POST"])
-def send_notification():
-    data = request.json
-    recipient = data.get("recipient")
-    notif_type = data.get("type")  # "email" or "sms"
-    message = data.get("message")
+# Setup templates
+templates = Jinja2Templates(directory="templates")
 
-    if not recipient or not notif_type or not message:
-        return jsonify({"error": "Missing required fields"}), 400
+@app.get("/messages")
+async def get_messages():
+    messages = list(collection.find({}, {"_id": 0}))
+    if not messages:
+        return {"messages": [{"text": "No messages found."}]} 
+    return {"messages": messages}
 
-    notification_data = {
-        "recipient": recipient,
-        "type": notif_type,
-        "message": message,
-        "status": "pending",
-        "timestamp": datetime.utcnow()
-    }
+# Serve index3.html from templates
+@app.get("/", response_class=HTMLResponse)
+async def root(request: Request):
+    return templates.TemplateResponse("index3.html", {"request": request})
 
-    # Insert into MongoDB
-    result = notifications.insert_one(notification_data)
-    return jsonify({"message": "Notification scheduled", "id": str(result.inserted_id)})
-
-@app.route("/notifications", methods=["GET"])
-def get_notifications():
-    all_notifications = list(notifications.find({}, {"_id": 0}))  
-    return jsonify(all_notifications)
+# Serve static files if needed
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    uvicorn.run("fourth.main:app", host="127.0.0.1", port=8000, reload=True)

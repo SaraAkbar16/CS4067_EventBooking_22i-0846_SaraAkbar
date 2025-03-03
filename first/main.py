@@ -17,6 +17,7 @@ import os;
 from typing import Optional
 app = FastAPI()
 #dsfgbvcsw
+#login done
 # Serve static files (CSS, JS)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

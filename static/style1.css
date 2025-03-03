@@ -1,0 +1,49 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f5f5dc; /* Beige background */
+    color: #4b3832; /* Dark brown text for contrast */
+}
+
+input {
+    padding: 8px;
+    margin: 10px;
+    border: 1px solid #8b7765; /* Soft brown border */
+    background-color: #fffaf0; /* Light beige input background */
+}
+
+button {
+    padding: 10px;
+    background-color: #8b5e3c; /* Warm brown button */
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #654321; /* Darker brown on hover */
+}
+
+table {
+    margin: auto;
+    border-collapse: collapse;
+    background-color: #fff8dc; /* Light beige table */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+th, td {
+    padding: 12px;
+    border: 1px solid #8b7765; /* Soft brown border */
+}
+
+th {
+    background-color: #deb887; /* Medium beige for headers */
+    color: white;
+}
+
+td {
+    background-color: #f5deb3; /* Lighter beige for rows */
+}
+

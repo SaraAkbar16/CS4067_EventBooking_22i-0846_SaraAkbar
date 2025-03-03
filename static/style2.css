@@ -1,0 +1,84 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f5f5dc; /* Beige background */
+    color: #4b3832; /* Dark brown text for contrast */
+    margin: 50px;
+}
+
+h1 {
+    color: #4b3832;
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+
+form {
+    display: inline-block;
+    text-align: left;
+    background-color: #fffaf0; /* Light beige form background */
+    padding: 20px;
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow */
+}
+
+label {
+    font-size: 1.1em;
+    color: #6d4b3b; /* Darker beige for labels */
+    margin-bottom: 5px;
+}
+
+input {
+    padding: 8px;
+    margin: 10px;
+    border: 1px solid #8b7765; /* Soft brown border */
+    background-color: #fffaf0; /* Light beige input background */
+    width: 100%;
+    font-size: 1em;
+}
+
+input:focus {
+    border-color: #ffb74d; /* Orange border on focus */
+    outline: none;
+}
+
+button {
+    padding: 10px;
+    background-color: #8b5e3c; /* Warm brown button */
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    width: 100%;
+}
+
+button:hover {
+    background-color: #654321; /* Darker brown on hover */
+}
+
+button:active {
+    background-color: #fbc02d; /* Darker yellow when clicked */
+}
+
+table {
+    margin: auto;
+    border-collapse: collapse;
+    background-color: #fff8dc; /* Light beige table */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+th, td {
+    padding: 12px;
+    border: 1px solid #8b7765; /* Soft brown border */
+}
+
+th {
+    background-color: #deb887; /* Medium beige for headers */
+    color: white;
+}
+
+td {
+    background-color: #f5deb3; /* Lighter beige for rows */
+}

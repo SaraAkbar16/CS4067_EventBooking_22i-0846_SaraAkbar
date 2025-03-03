@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <link rel="stylesheet" href="/static/style1.css">
+    <style>
+        /* Styling for the Proceed Button */
+        .proceed-container {
+            position: absolute;
+            top: 75%; /* Places the button at 3/4 of the page height */
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        #proceedBtn {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #proceedBtn:disabled {
+            background-color: gray;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <h2>Event Listings</h2>
+    <button id="loadEvents">Load Events</button>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>CheckBox</th>
+                <th>Event ID</th>
+                <th>Event Name</th>
+                <th>Location</th>
+                <th>Timing</th>
+                <th>Ticket Price</th>
+            </tr>
+        </thead>
+        <tbody id="eventTable"></tbody>
+    </table>
+
+    <!-- Proceed Button Container -->
+    <div class="proceed-container">
+        <button id="proceedBtn" disabled>Proceed</button>
+    </div>
+
+    <script src="/static/scriptscript.js"></script>
+</body>
+</html>

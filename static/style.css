@@ -1,0 +1,35 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f5f5dc; /* Beige background */
+    color: #4a4a4a; /* Slightly softer text color */
+    margin: 0;
+    padding: 20px;
+}
+
+input, button {
+    margin: 10px;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    outline: none;
+}
+
+input {
+    background-color: #fff8e1; /* Soft warm white */
+    border: 1px solid #d3c0a5; /* Light beige border */
+    color: #4a4a4a;
+}
+
+button {
+    background-color: #d3a87c; /* Warm earthy tone */
+    color: white;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+button:hover {
+    background-color: #b3875c; /* Darker beige for hover effect */
+}
+

@@ -1,0 +1,78 @@
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body and background */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f5f5dc; /* Beige background */
+    color: #4b4b4b; /* Dark gray text for contrast */
+    line-height: 1.6;
+    padding: 20px;
+}
+
+/* Main container */
+h1 {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-top: 50px;
+    color: #6c4f3d; /* Warm brown color */
+}
+
+/* Add some padding to the body to create spacing */
+body {
+    padding: 20px;
+}
+
+/* Header styling */
+header {
+    background-color: #d4c69e; /* Light beige */
+    padding: 15px 0;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+header h1 {
+    font-size: 2rem;
+    color: #6c4f3d; /* Darker brown for the title */
+}
+
+/* Main content area */
+main {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+/* Link styling */
+a {
+    color: #6c4f3d; /* Brown color for links */
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    margin-top: 40px;
+    padding: 10px;
+    background-color: #d4c69e;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+footer p {
+    color: #4b4b4b;
+}
+
+footer a {
+    font-weight: bold;
+}

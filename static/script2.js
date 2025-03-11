@@ -20,11 +20,11 @@ document.getElementById("eventForm").addEventListener("submit", function(event) 
 
             document.getElementById("eventForm").reset();  // ✅ Clear form after success
         } else {
-            alert("❌ Error saving booking: " + data.message);  // ✅ Show error alert
+            alert(" Error saving booking: " + data.message);  // ✅ Show error alert
         }
     })
     .catch(error => {
         console.error("Error:", error);
-        alert("❌ Error submitting the form.");
+        alert(" Error submitting the form.");
     });
 });

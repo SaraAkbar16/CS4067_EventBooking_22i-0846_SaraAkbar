@@ -111,24 +111,36 @@
     </form>
 
     <script>
-        document.getElementById("eventForm").addEventListener("submit", async function(event) {
-            event.preventDefault();
-        
-            let formData = {
-                name: document.getElementById("name").value,
-                payment: parseInt(document.getElementById("payment").value),
-                event: parseInt(document.getElementById("event").value)
-            };
-        
-            let response = await fetch("/submit/", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData)
-            });
-        
-            let result = await response.json();
-            alert(result.success ? "Booking successful!" : "Error: " + result.message);
+       document.getElementById("eventForm").addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    let formData = {
+        name: document.getElementById("name").value,
+        payment: parseInt(document.getElementById("payment").value),
+        event: parseInt(document.getElementById("event").value)
+    };
+
+    try {
+        let response = await fetch("/submit/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData)
         });
+
+        let result = await response.json();
+        
+        alert(result.success ? "Booking successful!" : "Error: " + result.message);
+
+        if (result.success) {
+            window.location.href = "http://127.0.0.1:8002"; 
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("An error occurred. Please try again.");
+    }
+});
+
+
         </script>
         
 </body>

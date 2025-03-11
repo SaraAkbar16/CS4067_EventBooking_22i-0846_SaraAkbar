@@ -113,9 +113,9 @@ def get_events():
         print(f"🚨 Error fetching events: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to fetch events from Java API")
     
-@app.get("/index2?event_ids=${selectedEventIds.join(',')}", response_class=HTMLResponse)
+@app.get("/index2", response_class=HTMLResponse)
 async def index2(request: Request, event_ids: Optional[int] = None):
-    return templates.TemplateResponse("/index2?event_ids=${selectedEventIds.join(',')}", {"request": request, "event_ids": event_ids})
+    return templates.TemplateResponse("/index2.html", {"request": request})
 
 
 from pydantic import BaseModel  # Import BaseModel

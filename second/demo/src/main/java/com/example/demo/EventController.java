@@ -16,15 +16,15 @@ public class EventController {
 
     @GetMapping
     public ResponseEntity<List<Event>> getEvents() {
-        System.out.println("📢 API Called: /api/events");
+        System.out.println(" API Called: /api/events");
         List<Event> events = eventRepository.findAll();
 
         if (events.isEmpty()) {
-            System.out.println("⚠️ No events found in MongoDB!");
+            System.out.println(" No events found in MongoDB!");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(List.of());
         }
 
-        System.out.println("✅ Events Retrieved: " + events.size());
+        System.out.println(" Events Retrieved: " + events.size());
         return ResponseEntity.ok(events);
     }
 }

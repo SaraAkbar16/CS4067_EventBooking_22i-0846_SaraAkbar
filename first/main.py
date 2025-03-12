@@ -89,19 +89,17 @@ def check_user(name: str, db: Session = Depends(get_db)):
 SPRING_BOOT_API = "http://127.0.0.1:8080/api/events"
 
 
-@app.get("/events")
-def get_events(name: str = "Guest"):
+@app.get("/events", response_class=HTMLResponse)
+def get_events(request: Request):
     try:
         response = requests.get(SPRING_BOOT_API)
         response.raise_for_status()
         events = response.json()
-
-        return JSONResponse(content={
-            "message": f"Welcome, {name}!",
-            "events": events
-        })
+        
+        return templates.TemplateResponse("index1.html", {"request": request, "events": events})
     except requests.exceptions.RequestException:
         raise HTTPException(status_code=500, detail="Failed to fetch events from Java API")
+
 
 
 @app.get("/index2", response_class=HTMLResponse)

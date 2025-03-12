@@ -32,6 +32,7 @@
     </style>
 </head>
 <body>
+    <h2>Welcome, <span id="username"></span>!</h2>
     <h2>Event Listings</h2>
     <button id="loadEvents">Load Events</button>
 
@@ -54,6 +55,77 @@
         <button id="proceedBtn" disabled>Proceed</button>
     </div>
 
-    <script src="/static/scriptscript.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("loadEvents").addEventListener("click", loadEvents);
+            document.getElementById("proceedBtn").addEventListener("click", proceedWithEvents);
+            
+            // Extract the 'name' parameter from the URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const name = urlParams.get("name") || "Guest";
+            document.getElementById("username").textContent = name;
+        });
+
+        let selectedEventIds = new Set(); // Use Set to track selected events
+
+        function loadEvents() {
+            fetch("http://127.0.0.1:8080/api/events")
+                .then(response => {
+                    if (!response.ok) throw new Error("Failed to load events");
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Events loaded successfully:", data);
+                    const eventTable = document.getElementById("eventTable");
+                    eventTable.innerHTML = ""; // Clear table before adding new data
+
+                    if (data.length === 0) {
+                        eventTable.innerHTML = "<tr><td colspan='6'>No events found</td></tr>";
+                        return;
+                    }
+
+                    data.forEach(event => {
+                        let row = document.createElement("tr");
+                        row.innerHTML = `
+                            <td><input type="checkbox" class="eventCheckbox" value="${event.id}"></td>
+                            <td>${event.id}</td>  
+                            <td>${event.event_name}</td>
+                            <td>${event.location}</td>
+                            <td>${event.timing}</td>
+                            <td>${event.ticket_price}</td>
+                        `;
+                        eventTable.appendChild(row);
+                    });
+
+                    // Attach event listeners to checkboxes after rendering
+                    document.querySelectorAll(".eventCheckbox").forEach(checkbox => {
+                        checkbox.addEventListener("change", function () {
+                            if (this.checked) {
+                                selectedEventIds.add(this.value);
+                            } else {
+                                selectedEventIds.delete(this.value);
+                            }
+
+                            console.log("Selected Event IDs:", Array.from(selectedEventIds));
+                            document.getElementById("proceedBtn").disabled = selectedEventIds.size === 0;
+                        });
+                    });
+                })
+                .catch(error => {
+                    console.error("Could not load events. Please try again.", error);
+                    alert("Error loading events. Please try again later.");
+                });
+        }
+        function proceedWithEvents() {
+    if (selectedEventIds.size > 0) {
+        const name = document.getElementById("username").textContent; // Get the username
+        const eventIds = Array.from(selectedEventIds).join(","); // Convert Set to comma-separated string
+        const url = `http://127.0.0.1:8001/index2?name=${encodeURIComponent(name)}&eventIds=${encodeURIComponent(eventIds)}`;
+        window.location.href = url; // Redirect with query parameters
+    }
+}
+
+
+    </script>
 </body>
 </html>

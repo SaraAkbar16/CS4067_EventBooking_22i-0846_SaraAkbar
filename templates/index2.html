@@ -97,51 +97,70 @@
 
     <!-- Event Registration Form -->
     <form id="eventForm">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required>
-
+        <h2>Welcome, {{ name }}!</h2>
+        <h3>Selected Events:</h3>
+        <ul>
+            {% for event in selected_events %}
+                <li>Event ID: {{ event }}</li>
+            {% endfor %}
+        </ul>
+        
         <label for="payment">Payment:</label>
         <input type="number" id="payment" name="payment" min="1000" step="500" required>
 
-        <label for="event">Event:</label>
-        <input type="number" id="event" name="event" placeholder="Enter event ID" required>
-
-        <p>Event ID: {{ event_ids }}</p>
         <button type="submit">Submit</button>
     </form>
 
     <script>
-       document.getElementById("eventForm").addEventListener("submit", async function(event) {
-    event.preventDefault();
-
-    let formData = {
-        name: document.getElementById("name").value,
-        payment: parseInt(document.getElementById("payment").value),
-        event: parseInt(document.getElementById("event").value)
-    };
-
+        document.addEventListener("DOMContentLoaded", async function () {
     try {
-        let response = await fetch("/submit/", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formData)
-        });
+        let response = await fetch("/get-user-info/");
+        let data = await response.json();
 
-        let result = await response.json();
-        
-        alert(result.success ? "Booking successful!" : "Error: " + result.message);
+        console.log("User Name:", data.name);
+        console.log("Event ID:", data.event_id);
 
-        if (result.success) {
-            window.location.href = "http://127.0.0.1:8002"; 
-        }
+        document.getElementById("nameDisplay").textContent = data.name;
+        document.getElementById("eventIdDisplay").textContent = data.event_id;
+
+        // Store these values for form submission
+        document.getElementById("eventForm").dataset.name = data.name;
+        document.getElementById("eventForm").dataset.eventId = data.event_id;
     } catch (error) {
-        console.error("Error:", error);
-        alert("An error occurred. Please try again.");
+        console.error("Error fetching user info:", error);
+        alert("Failed to load user data.");
     }
 });
 
 
-        </script>
-        
+        document.getElementById("eventForm").addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            let formData = {
+                name: this.dataset.name,
+                event: parseInt(this.dataset.eventId),
+                payment: parseInt(document.getElementById("payment").value)
+            };
+
+            try {
+                let response = await fetch("/submit/", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(formData)
+                });
+
+                let result = await response.json();
+
+                alert(result.success ? "Booking successful!" : "Error: " + result.message);
+
+                if (result.success) {
+                    window.location.href = "http://127.0.0.1:8002";
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("An error occurred. Please try again.");
+            }
+        });
+    </script>
 </body>
 </html>

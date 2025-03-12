@@ -10,18 +10,20 @@
     <h2>Welcome, <span id="username"></span>!</h2>
     <button id="proceedBtn">Proceed</button>
 
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const name = urlParams.get("name");
+        
+        if (name) {
+            document.getElementById("username").textContent = name;
+        } else {
+            document.getElementById("username").textContent = "Guest";
+        }
 
-<script>
-    // Get username from query string
-    const urlParams = new URLSearchParams(window.location.search);
-    const name = urlParams.get("name");
-    document.getElementById("username").textContent = name;
-
-    // Redirect to the correct route
-    document.getElementById("proceedBtn").addEventListener("click", function() {
-        window.location.href = `/index1.html?name=${encodeURIComponent(name)}`;
-    });
-</script>
-
+        // Redirect to /events when the button is clicked, passing the name
+        document.getElementById("proceedBtn").addEventListener("click", function() {
+            window.location.href = `/events?name=${encodeURIComponent(name)}`;
+        });
+    </script>
 </body>
 </html>

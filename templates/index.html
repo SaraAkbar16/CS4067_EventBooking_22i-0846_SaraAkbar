@@ -11,26 +11,39 @@
     <form id="userForm">
         <label for="name">Name:</label>
         <input type="text" id="name" name="name" required>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+
         <button type="submit">Submit</button>
     </form>
 
     <script>
-        document.getElementById("userForm").addEventListener("submit", async function (event) {
-            event.preventDefault();
-            const name = document.getElementById("name").value;
+      document.getElementById("userForm").addEventListener("submit", async function (event) {
+    event.preventDefault();
+    
+    const name = document.getElementById("name").value;
+    const password = document.getElementById("password").value;
 
-            const response = await fetch("/users/", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name: name })
-            });
-
-            if (response.ok) {
-                window.location.href = "/welcome";
-            } else {
-                alert("Error submitting form");
-            }
+    try {
+        const response = await fetch("/users/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: name, password: password })
         });
+
+        if (response.redirected) {
+            window.location.href = response.url; 
+        } else {
+            const errorData = await response.json();
+            alert(`Error: ${errorData.detail}`);
+        }
+    } catch (error) {
+        console.error("Network Error:", error);
+        alert("Username Alreadu exists.");
+    }
+});
+
     </script>
 </body>
 </html>

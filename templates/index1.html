@@ -116,12 +116,26 @@
                     alert("Error loading events. Please try again later.");
                 });
         }
-        function proceedWithEvents() {
+        let socket = new WebSocket("ws://127.0.0.1:8001/ws");
+
+socket.onopen = function () {
+    console.log("WebSocket Connected");
+};
+
+socket.onerror = function (error) {
+    console.error("WebSocket Error: ", error);
+};
+
+function proceedWithEvents() {
     if (selectedEventIds.size > 0) {
         const name = document.getElementById("username").textContent; // Get the username
-        const eventIds = Array.from(selectedEventIds).join(","); // Convert Set to comma-separated string
-        const url = `http://127.0.0.1:8001/index2?name=${encodeURIComponent(name)}&eventIds=${encodeURIComponent(eventIds)}`;
-        window.location.href = url; // Redirect with query parameters
+        const eventIds = Array.from(selectedEventIds).join(","); // Convert Set to a comma-separated string
+
+        // Send data through WebSocket
+        socket.send(JSON.stringify({ name: name, eventIds: eventIds }));
+
+        // Redirect to index2 with username and eventIds as query parameters
+        window.location.href = `http://127.0.0.1:8001/index2?username=${encodeURIComponent(name)}&eventIds=${encodeURIComponent(eventIds)}`;
     }
 }
 

@@ -8,8 +8,8 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background-color: #f5f5dc; /* Beige background */
-            color: #4b3832; /* Dark brown text for contrast */
+            background-color: #f5f5dc;
+            color: #4b3832;
             margin: 50px;
         }
 
@@ -22,15 +22,15 @@
         form {
             display: inline-block;
             text-align: left;
-            background-color: #fffaf0; /* Light beige form background */
+            background-color: #fffaf0;
             padding: 20px;
-            border-radius: 10px; /* Rounded corners */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         label {
             font-size: 1.1em;
-            color: #6d4b3b; /* Darker beige for labels */
+            color: #6d4b3b;
             margin-bottom: 5px;
             display: block;
         }
@@ -38,20 +38,20 @@
         input {
             padding: 8px;
             margin: 10px 0;
-            border: 1px solid #8b7765; /* Soft brown border */
-            background-color: #fffaf0; /* Light beige input background */
+            border: 1px solid #8b7765;
+            background-color: #fffaf0;
             width: 100%;
             font-size: 1em;
         }
 
         input:focus {
-            border-color: #ffb74d; /* Orange border on focus */
+            border-color: #ffb74d;
             outline: none;
         }
 
         button {
             padding: 10px;
-            background-color: #8b5e3c; /* Warm brown button */
+            background-color: #8b5e3c;
             color: white;
             border: none;
             cursor: pointer;
@@ -62,105 +62,74 @@
         }
 
         button:hover {
-            background-color: #654321; /* Darker brown on hover */
+            background-color: #654321;
         }
 
         button:active {
-            background-color: #fbc02d; /* Darker yellow when clicked */
+            background-color: #fbc02d;
         }
 
         table {
             margin: auto;
             border-collapse: collapse;
-            background-color: #fff8dc; /* Light beige table */
+            background-color: #fff8dc;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         th, td {
             padding: 12px;
-            border: 1px solid #8b7765; /* Soft brown border */
+            border: 1px solid #8b7765;
         }
 
         th {
-            background-color: #deb887; /* Medium beige for headers */
+            background-color: #deb887;
             color: white;
         }
 
         td {
-            background-color: #f5deb3; /* Lighter beige for rows */
+            background-color: #f5deb3;
         }
     </style>
 </head>
 <body>
     <h1>Event Registration</h1>
 
-    <!-- Event Registration Form -->
     <form id="eventForm">
-        <h2>Welcome, {{ name }}!</h2>
+        <h2>Welcome, <span id="username">Guest</span>!</h2>
         <h3>Selected Events:</h3>
-        <ul>
-            {% for event in selected_events %}
-                <li>Event ID: {{ event }}</li>
-            {% endfor %}
+        <ul id="eventList">
+            <li>No events selected.</li>
         </ul>
-        
-        <label for="payment">Payment:</label>
-        <input type="number" id="payment" name="payment" min="1000" step="500" required>
-
-        <button type="submit">Submit</button>
+        <button id="paymentButton">Proceed to Payment</button>
     </form>
-
     <script>
-        document.addEventListener("DOMContentLoaded", async function () {
-    try {
-        let response = await fetch("/get-user-info/");
-        let data = await response.json();
+ const urlParams = new URLSearchParams(window.location.search);
+const username = urlParams.get("username");
+const eventIds = urlParams.get("eventIds");
 
-        console.log("User Name:", data.name);
-        console.log("Event ID:", data.event_id);
+if (username) {
+    document.getElementById("username").textContent = username; // Corrected ID reference
+}
 
-        document.getElementById("nameDisplay").textContent = data.name;
-        document.getElementById("eventIdDisplay").textContent = data.event_id;
+if (eventIds && eventIds.trim() !== "") {
+    const eventList = document.getElementById("eventList");
+    eventList.innerHTML = ""; // Clear previous content
 
-        // Store these values for form submission
-        document.getElementById("eventForm").dataset.name = data.name;
-        document.getElementById("eventForm").dataset.eventId = data.event_id;
-    } catch (error) {
-        console.error("Error fetching user info:", error);
-        alert("Failed to load user data.");
-    }
-});
-
-
-        document.getElementById("eventForm").addEventListener("submit", async function (event) {
-            event.preventDefault();
-
-            let formData = {
-                name: this.dataset.name,
-                event: parseInt(this.dataset.eventId),
-                payment: parseInt(document.getElementById("payment").value)
-            };
-
-            try {
-                let response = await fetch("/submit/", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(formData)
-                });
-
-                let result = await response.json();
-
-                alert(result.success ? "Booking successful!" : "Error: " + result.message);
-
-                if (result.success) {
-                    window.location.href = "http://127.0.0.1:8002";
-                }
-            } catch (error) {
-                console.error("Error:", error);
-                alert("An error occurred. Please try again.");
-            }
+    eventIds.split(",").forEach(eventId => {
+        let li = document.createElement("li");
+        li.textContent = `Event ID: ${eventId}`;
+        eventList.appendChild(li);
+    });
+} else {
+    document.getElementById("eventList").innerHTML = "<li>No events selected.</li>";
+}
+document.getElementById("paymentButton").addEventListener("click", function () {
+            window.location.href = `http://127.0.0.1:8001/payment?username=${encodeURIComponent(username)}&eventIds=${encodeURIComponent(eventIds)}`;
         });
+
+
+
     </script>
 </body>
 </html>

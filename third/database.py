@@ -1,22 +1,18 @@
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
-from sqlalchemy import Column, Integer, String
+from fastapi import FastAPI, Depends, HTTPException
+from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, Session
+from pydantic import BaseModel
 
-# PostgreSQL Database URL (update this with your actual credentials)
-DATABASE_URL = "postgresql+asyncpg://postgres:sara2020@localhost/users"
+# PostgreSQL Database URL (Ensure your credentials are correct)
+DATABASE_URL = "postgresql://postgres:sara2020@localhost/users"
 
-
-
-# Create the database engine
-engine = create_async_engine(DATABASE_URL, echo=True)
-
-# Create a session factory
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine, class_=AsyncSession)
-
-# Base class for ORM models
+# Set up database connection
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
-# Define the Booking model
+# Define the Booking table
 class Booking(Base):
     __tablename__ = "bookings"
 
@@ -25,7 +21,19 @@ class Booking(Base):
     payment = Column(Integer, nullable=False)
     event = Column(Integer, nullable=False)
 
-# Function to create tables (only run once)
-async def init_db():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+# Ensure table creation
+Base.metadata.create_all(bind=engine)
+
+# Dependency for database session
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+# Define Pydantic model for request validation
+class BookingData(BaseModel):
+    name: str  # Updated to match the `Booking` table
+    event: int
+    payment: int

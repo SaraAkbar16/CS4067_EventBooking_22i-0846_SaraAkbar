@@ -107,7 +107,7 @@
  const urlParams = new URLSearchParams(window.location.search);
 const username = urlParams.get("username");
 const eventIds = urlParams.get("eventIds");
-
+console.log(username,eventIds)
 if (username) {
     document.getElementById("username").textContent = username; // Corrected ID reference
 }
@@ -125,10 +125,50 @@ if (eventIds && eventIds.trim() !== "") {
     document.getElementById("eventList").innerHTML = "<li>No events selected.</li>";
 }
 document.getElementById("paymentButton").addEventListener("click", function () {
-            window.location.href = `http://127.0.0.1:8001/payment?username=${encodeURIComponent(username)}&eventIds=${encodeURIComponent(eventIds)}`;
-        });
+    const usernameElement = document.getElementById("username");
+    const eventListElement = document.getElementById("eventList");
 
+    if (!usernameElement || !eventListElement) {
+        alert("Error: Username or event list not found.");
+        return;
+    }
 
+    const username = usernameElement.textContent.trim();
+    const eventIds = [...eventListElement.getElementsByTagName("li")].map(li => {
+        return li.textContent.replace("Event ID: ", "").trim();
+    });
+
+    if (!username || eventIds.length === 0) {
+        alert("Please provide a username and select an event.");
+        return;
+    }
+
+    fetch("http://127.0.0.1:8001/submit/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            name: username,  
+            event: parseInt(eventIds[0], 10),  
+            payment: 2500  
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("Booking successful!");
+            window.location.href = "http://127.0.0.1:8002";
+            // Redirect after successful booking
+        } else {
+            alert("Error: " + data.message);
+        }
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        alert("An error occurred while processing your request.");
+    });
+});
 
     </script>
 </body>

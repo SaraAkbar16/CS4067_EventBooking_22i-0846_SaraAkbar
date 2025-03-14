@@ -13,7 +13,7 @@
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const name = urlParams.get("name");
-        
+        console.log(name)
         if (name) {
             document.getElementById("username").textContent = name;
         } else {
@@ -21,6 +21,7 @@
         }
 
     document.getElementById("proceedBtn").addEventListener("click", function() {
+        
         window.location.href = `/index1.html?name=${encodeURIComponent(name)}`;
     });
 </script>

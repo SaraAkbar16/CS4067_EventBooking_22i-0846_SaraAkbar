@@ -54,12 +54,15 @@ def read_root(request: Request):
 
 @app.post("/users/")
 def create_user(user_data: UserCreate, db: Session = Depends(get_db)):
+    existing_user = db.query(models.User).filter(models.User.name == user_data.name).first()
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Username already taken")
+
     new_user = models.User(name=user_data.name, password=user_data.password)
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
     
-    # Redirect to the welcome page with the username as a query parameter
     return RedirectResponse(url=f"/welcome?name={new_user.name}", status_code=303)
 
 @app.get("/welcome")

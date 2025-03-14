@@ -10,7 +10,6 @@ import requests
 from fastapi.responses import HTMLResponse, RedirectResponse
 from typing import Optional
 import os
-from passlib.context import CryptContext
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, HTTPException
@@ -27,11 +26,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-
-# Password hashing setup
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Serve static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -60,8 +54,7 @@ def read_root(request: Request):
 
 @app.post("/users/")
 def create_user(user_data: UserCreate, db: Session = Depends(get_db)):
-    hashed_password = pwd_context.hash(user_data.password)
-    new_user = models.User(name=user_data.name, password=hashed_password)
+    new_user = models.User(name=user_data.name, password=user_data.password)
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
@@ -69,11 +62,9 @@ def create_user(user_data: UserCreate, db: Session = Depends(get_db)):
     # Redirect to the welcome page with the username as a query parameter
     return RedirectResponse(url=f"/welcome?name={new_user.name}", status_code=303)
 
-
 @app.get("/welcome")
 def welcome_page(request: Request, name: str = "Guest"):
     return templates.TemplateResponse("welcome.html", {"request": request, "name": name})
-
 
 @app.get("/{page}")
 def serve_page(request: Request, page: str, name: str = "Guest"):
@@ -88,7 +79,6 @@ def check_user(name: str, db: Session = Depends(get_db)):
 
 SPRING_BOOT_API = "http://127.0.0.1:8080/api/events"
 
-
 @app.get("/events", response_class=HTMLResponse)
 def get_events(request: Request):
     try:
@@ -99,8 +89,6 @@ def get_events(request: Request):
         return templates.TemplateResponse("index1.html", {"request": request, "events": events})
     except requests.exceptions.RequestException:
         raise HTTPException(status_code=500, detail="Failed to fetch events from Java API")
-
-
 
 @app.get("/index2", response_class=HTMLResponse)
 async def index2(request: Request, event_ids: Optional[int] = None):

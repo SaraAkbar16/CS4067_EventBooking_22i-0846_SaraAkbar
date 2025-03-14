@@ -56,7 +56,7 @@
 
     <script>
         document.getElementById("loginForm").addEventListener("submit", async function(event) {
-            event.preventDefault(); // Prevent default form submission
+            event.preventDefault(); 
             
             const formData = new FormData(this);
             const response = await fetch("/login", {
@@ -67,7 +67,7 @@
             const result = await response.json();
             if (result.status === "success") {
                 alert("Login successful!");
-                window.location.href = "/dashboard"; // Redirect on success (Change URL as needed)
+                window.location.href = result.redirect_url;  // Redirect to the URL with username
             } else {
                 alert("Invalid username or password!");
             }

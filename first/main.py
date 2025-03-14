@@ -1,20 +1,16 @@
 import uvicorn
-from fastapi import FastAPI, Depends, Request, HTTPException
+from fastapi import FastAPI, Depends, Request, HTTPException, Form
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from first.database import engine, SessionLocal
 from first import models
-import first.schemas as schemas
 import requests
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from typing import Optional
 import os
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import JSONResponse
-import requests
 
 app = FastAPI()
 
@@ -44,26 +40,17 @@ def get_db():
     finally:
         db.close()
 
-class UserCreate(BaseModel):
-    name: str
-    password: str
-
 @app.get("/")
-def read_root(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+def login_page(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request})
 
-@app.post("/users/")
-def create_user(user_data: UserCreate, db: Session = Depends(get_db)):
-    existing_user = db.query(models.User).filter(models.User.name == user_data.name).first()
-    if existing_user:
-        raise HTTPException(status_code=400, detail="Username already taken")
-
-    new_user = models.User(name=user_data.name, password=user_data.password)
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-    
-    return RedirectResponse(url=f"/welcome?name={new_user.name}", status_code=303)
+@app.post("/login")
+async def login(username: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.name == username, models.User.password == password).first()
+    if user:
+        return RedirectResponse(url=f"/welcome?name={user.name}", status_code=303)
+    else:
+        return JSONResponse(content={"status": "fail", "message": "Invalid username or password"})
 
 @app.get("/welcome")
 def welcome_page(request: Request, name: str = "Guest"):
@@ -92,21 +79,6 @@ def get_events(request: Request):
         return templates.TemplateResponse("index1.html", {"request": request, "events": events})
     except requests.exceptions.RequestException:
         raise HTTPException(status_code=500, detail="Failed to fetch events from Java API")
-
-@app.get("/index2", response_class=HTMLResponse)
-async def index2(request: Request, event_ids: Optional[int] = None):
-    return templates.TemplateResponse("/index2.html", {"request": request})
-
-class EventData(BaseModel):
-    event_ids: list[int]
-
-@app.post("/process_event")
-async def process_event(data: EventData):
-    return {"success": True, "message": "Events processed successfully"}
-
-@app.get("/index3", response_class=HTMLResponse)
-async def index3(request: Request):
-    return RedirectResponse(url="/static/index3.html", status_code=303)
 
 if __name__ == "__main__":
     uvicorn.run("first.main:app", host="127.0.0.1", port=8000, reload=True)

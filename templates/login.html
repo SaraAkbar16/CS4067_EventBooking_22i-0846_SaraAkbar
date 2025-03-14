@@ -55,23 +55,23 @@
     </div>
 
     <script>
-        document.getElementById("loginForm").addEventListener("submit", async function(event) {
-            event.preventDefault(); 
-            
-            const formData = new FormData(this);
-            const response = await fetch("/login", {
-                method: "POST",
-                body: formData
-            });
+       document.getElementById("loginForm").addEventListener("submit", async function(event) {
+    event.preventDefault(); 
+    
+    const formData = new FormData(this);
+    const response = await fetch("/login", {
+        method: "POST",
+        body: formData
+    });
 
-            const result = await response.json();
-            if (result.status === "success") {
-                alert("Login successful!");
-                window.location.href = result.redirect_url;  // Redirect to the URL with username
-            } else {
-                alert("Invalid username or password!");
-            }
-        });
+    if (response.redirected) {
+        window.location.href = response.url;  // Redirect to the welcome page
+    } else {
+        const result = await response.json();
+        alert(result.message);
+    }
+});
+
     </script>
 </body>
 </html>

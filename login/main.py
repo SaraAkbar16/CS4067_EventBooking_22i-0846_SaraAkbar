@@ -37,7 +37,7 @@ async def login(username: str = Form(...), password: str = Form(...)):
 
     if user:
         # Attach the username to the redirect URL
-        return JSONResponse(content={"status": "success", "redirect_url": f"http://127.0.0.1:8001/index1.html?username={username}"})
+        return JSONResponse(content={"status": "success", "redirect_url": f"http://127.0.0.1:8001"})
     else:
         return JSONResponse(content={"status": "fail", "message": "Invalid username or password"})
 

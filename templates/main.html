@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+     <style>
+        body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f5f5dc;
+    color: #4a4a4a; 
+    margin: 0;
+    padding: 20px;
+}
+
+input, button {
+    margin: 10px;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    outline: none;
+}
+
+input {
+    background-color: #fff8e1; /* Soft warm white */
+    border: 1px solid #d3c0a5; /* Light beige border */
+    color: #4a4a4a;
+}
+
+button {
+    background-color: #d3a87c; /* Warm earthy tone */
+    color: white;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+button:hover {
+    background-color: #b3875c; /* Darker beige for hover effect */
+}
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to the Event Platform</h1>
+        <p>Choose an option below:</p>
+        <button id="loginBtn">Login</button>
+        <button id="registerBtn">Register</button>
+    </div>
+    <script>
+ document.getElementById("registerBtn").addEventListener("click", function() {
+    // Redirect to the /register page on port 8001
+    console.log("Redirecting to /register page on port 8001");
+    window.location.href = "http://127.0.0.1:8001";  
+});
+document.getElementById("loginBtn").addEventListener("click", function() {
+    // Redirect to the /register page on port 8001
+    console.log("Redirecting to /register page on port 8001");
+    window.location.href = "http://127.0.0.1:8002";  
+});
+
+</script>
+
+
+</body>
+</html>

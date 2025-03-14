@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f5f5dc;
+            color: #4a4a4a; 
+            margin: 0;
+            padding: 20px;
+        }
+        input, button {
+            margin: 10px;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+        }
+        input {
+            background-color: #fff8e1;
+            border: 1px solid #d3c0a5;
+            color: #4a4a4a;
+        }
+        button {
+            background-color: #d3a87c;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+        button:hover {
+            background-color: #b3875c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to the Event Platform</h1>
+        <p>Choose an option below:</p>
+        <form id="loginForm">
+            <div>
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", async function(event) {
+            event.preventDefault(); // Prevent default form submission
+            
+            const formData = new FormData(this);
+            const response = await fetch("/login", {
+                method: "POST",
+                body: formData
+            });
+
+            const result = await response.json();
+            if (result.status === "success") {
+                alert("Login successful!");
+                window.location.href = "/dashboard"; // Redirect on success (Change URL as needed)
+            } else {
+                alert("Invalid username or password!");
+            }
+        });
+    </script>
+</body>
+</html>

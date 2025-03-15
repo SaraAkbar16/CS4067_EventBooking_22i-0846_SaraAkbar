@@ -20,30 +20,30 @@
 
     <script>
       document.getElementById("userForm").addEventListener("submit", async function (event) {
-    event.preventDefault();
-    
-    const name = document.getElementById("name").value;
-    const password = document.getElementById("password").value;
+          event.preventDefault();
+          
+          const name = document.getElementById("name").value;
+          const password = document.getElementById("password").value;
 
-    try {
-        const response = await fetch("/users/", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name: name, password: password })
-        });
+          try {
+              const response = await fetch("/login", {  // Fix: Changed to "/login"
+                  method: "POST",
+                  body: new URLSearchParams({ "username": name, "password": password }) // Fix: Send form-encoded data
+              });
 
-        if (response.redirected) {
-            window.location.href = response.url; 
-        } else {
-            const errorData = await response.json();
-            alert(`Error: ${errorData.detail}`);
-        }
-    } catch (error) {
-        console.error("Network Error:", error);
-        alert("Username Already exists.");
-    }
-});
+              const result = await response.json();
 
+              if (result.status === "fail") {
+                  alert(result.message);
+              } else if (result.status === "success") {
+                  alert(result.message);
+                  window.location.href = result.redirect_url;
+              }
+          } catch (error) {
+              console.error("Network Error:", error);
+              alert("An unexpected error occurred.");
+          }
+      });
     </script>
 </body>
 </html>

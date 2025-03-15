@@ -1,7 +1,7 @@
-from fastapi import FastAPI, Request, Form, Depends
+from fastapi import FastAPI, Request, Form
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import JSONResponse
 import asyncpg
 import uvicorn
 
@@ -20,26 +20,28 @@ DATABASE_URL = "postgresql://postgres:sara2020@localhost:5432/users"
 async def get_db_connection():
     return await asyncpg.connect(DATABASE_URL)
 
-# Route to serve the main page
-@app.get("/", response_class=HTMLResponse)
+# Route to serve the main page (Fix: Return HTML Template)
+@app.get("/")
 async def main_page(request: Request):
-    return templates.TemplateResponse("login.html", {"request": request})
+    return templates.TemplateResponse("index.html", {"request": request})
 
-# Login route with database check
+# Register or login user
 @app.post("/login")
 async def login(username: str = Form(...), password: str = Form(...)):
     conn = await get_db_connection()
     
-    # Check if the user exists in the database
-    user = await conn.fetchrow("SELECT * FROM users WHERE name = $1 AND password = $2", username, password)
+    # Check if the username already exists
+    existing_user = await conn.fetchrow("SELECT * FROM users WHERE name = $1", username)
     
+    if existing_user:
+        await conn.close()
+        return JSONResponse(content={"status": "fail", "message": "Username already exists. Please choose another."})
+    
+    # Insert the new user into the database
+    await conn.execute("INSERT INTO users (name, password) VALUES ($1, $2)", username, password)
     await conn.close()
-
-    if user:
-        # Attach the username to the redirect URL
-        return JSONResponse(content={"status": "success", "redirect_url": f"http://127.0.0.1:8001"})
-    else:
-        return JSONResponse(content={"status": "fail", "message": "Invalid username or password"})
+    
+    return JSONResponse(content={"status": "success", "message": "User registered successfully!", "redirect_url": "http://127.0.0.1:8001"})
 
 # Run the FastAPI app
 if __name__ == "__main__":

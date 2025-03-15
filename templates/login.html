@@ -39,7 +39,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Welcome to the Event Platform</h1>
+        <h1>Welcome to the Event Platform Login</h1>
         <p>Choose an option below:</p>
         <form id="loginForm">
             <div>
@@ -55,7 +55,7 @@
     </div>
 
     <script>
-       document.getElementById("loginForm").addEventListener("submit", async function(event) {
+   document.getElementById("loginForm").addEventListener("submit", async function(event) {
     event.preventDefault(); 
     
     const formData = new FormData(this);
@@ -65,10 +65,21 @@
     });
 
     if (response.redirected) {
-        window.location.href = response.url;  // Redirect to the welcome page
-    } else {
+        // If redirected, navigate to the new page
+        window.location.href = response.url;
+        return;
+    }
+
+    // If not redirected, try parsing as JSON
+    try {
         const result = await response.json();
-        alert(result.message);
+
+        if (result.status === "fail") {
+            alert(result.message);
+        }
+    } catch (error) {
+        console.error("Error parsing JSON:", error);
+        alert("An unexpected error occurred.");
     }
 });
 

@@ -28,9 +28,12 @@ Base.metadata.create_all(bind=engine)
 def get_db():
     db = SessionLocal()
     try:
+        print("Database session started")  # Debugging
         yield db
     finally:
         db.close()
+        print("Database session closed")  # Debugging
+
 
 # Define Pydantic model for request validation
 class BookingData(BaseModel):

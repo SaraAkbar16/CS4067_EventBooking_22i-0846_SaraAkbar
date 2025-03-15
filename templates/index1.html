@@ -122,7 +122,7 @@
                 const name = document.getElementById("username").textContent; // Get the username
                 const eventIds = Array.from(selectedEventIds).join(","); // Convert Set to a comma-separated string
                 
-                window.location.href = `http://127.0.0.1:8001/index2?username=${encodeURIComponent(name)}&eventIds=${encodeURIComponent(eventIds)}`;
+                window.location.href = `http://127.0.0.1:8003/index2?username=${encodeURIComponent(name)}&eventIds=${encodeURIComponent(eventIds)}`;
             }
         }
     </script>

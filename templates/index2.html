@@ -143,7 +143,7 @@ document.getElementById("paymentButton").addEventListener("click", function () {
         return;
     }
 
-    fetch("http://127.0.0.1:8001/submit/", {
+    fetch("http://127.0.0.1:8003/submit/", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -158,7 +158,7 @@ document.getElementById("paymentButton").addEventListener("click", function () {
     .then(data => {
         if (data.success) {
             alert("Booking successful!");
-            window.location.href = "http://127.0.0.1:8002";
+            window.location.href = "http://127.0.0.1:8004";
             // Redirect after successful booking
         } else {
             alert("Error: " + data.message);

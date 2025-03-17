@@ -1,7 +1,6 @@
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
-from .database import get_db, Booking, BookingData
-
+from database import get_db, Booking, BookingData
 from fastapi.middleware.cors import CORSMiddleware
 import pika
 import threading
@@ -25,7 +24,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory=".")
+
 
 # RabbitMQ Consumer
 def callback(ch, method, properties, body):

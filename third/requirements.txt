@@ -1,0 +1,6 @@
+fastapi==0.110.0
+uvicorn[standard]==0.29.0
+pika==1.3.2
+SQLAlchemy==2.0.29
+psycopg2-binary==2.9.9  # Assuming you are using PostgreSQL
+jinja2==3.1.3

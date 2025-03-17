@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f5f5dc;
+            color: #4b3832;
+            margin: 50px;
+        }
+
+        h1 {
+            color: #4b3832;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: inline-block;
+            text-align: left;
+            background-color: #fffaf0;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            font-size: 1.1em;
+            color: #6d4b3b;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        input {
+            padding: 8px;
+            margin: 10px 0;
+            border: 1px solid #8b7765;
+            background-color: #fffaf0;
+            width: 100%;
+            font-size: 1em;
+        }
+
+        input:focus {
+            border-color: #ffb74d;
+            outline: none;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #8b5e3c;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #654321;
+        }
+
+        button:active {
+            background-color: #fbc02d;
+        }
+
+        table {
+            margin: auto;
+            border-collapse: collapse;
+            background-color: #fff8dc;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #8b7765;
+        }
+
+        th {
+            background-color: #deb887;
+            color: white;
+        }
+
+        td {
+            background-color: #f5deb3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Event Registration</h1>
+
+    <form id="eventForm">
+        <h2>Welcome, <span id="username">Guest</span>!</h2>
+        <h3>Selected Events:</h3>
+        <ul id="eventList">
+            <li>No events selected.</li>
+        </ul>
+        <button id="paymentButton">Proceed to Payment</button>
+    </form>
+    <script>
+ const urlParams = new URLSearchParams(window.location.search);
+const username = urlParams.get("username");
+const eventIds = urlParams.get("eventIds");
+console.log(username,eventIds)
+if (username) {
+    document.getElementById("username").textContent = username; // Corrected ID reference
+}
+
+if (eventIds && eventIds.trim() !== "") {
+    const eventList = document.getElementById("eventList");
+    eventList.innerHTML = ""; // Clear previous content
+
+    eventIds.split(",").forEach(eventId => {
+        let li = document.createElement("li");
+        li.textContent = `Event ID: ${eventId}`;
+        eventList.appendChild(li);
+    });
+} else {
+    document.getElementById("eventList").innerHTML = "<li>No events selected.</li>";
+}
+document.getElementById("paymentButton").addEventListener("click", function () {
+    const usernameElement = document.getElementById("username");
+    const eventListElement = document.getElementById("eventList");
+
+    if (!usernameElement || !eventListElement) {
+        alert("Error: Username or event list not found.");
+        return;
+    }
+
+    const username = usernameElement.textContent.trim();
+    const eventIds = [...eventListElement.getElementsByTagName("li")].map(li => {
+        return li.textContent.replace("Event ID: ", "").trim();
+    });
+
+    if (!username || eventIds.length === 0) {
+        alert("Please provide a username and select an event.");
+        return;
+    }
+
+    fetch("http://127.0.0.1:8003/submit/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            name: username,  
+            event: parseInt(eventIds[0], 10),  
+            payment: 2500  
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("Booking successful!");
+            window.location.href = "http://127.0.0.1:8004";
+            // Redirect after successful booking
+        } else {
+            alert("Error: " + data.message);
+        }
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        alert("An error occurred while processing your request.");
+    });
+});
+
+    </script>
+</body>
+</html>

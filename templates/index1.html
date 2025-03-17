@@ -4,30 +4,109 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Registration</title>
-    <link rel="stylesheet" href="/static/style1.css">
     <style>
-        /* Styling for the Proceed Button */
-        .proceed-container {
-            position: absolute;
-            top: 75%; /* Places the button at 3/4 of the page height */
-            left: 50%;
-            transform: translate(-50%, -50%);
+        /* Global Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f5eb;
+            color: #5a4e42;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
             text-align: center;
         }
 
-        #proceedBtn {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #4CAF50;
-            color: white;
+        h2 {
+            color: #5a4e42;
+            margin-top: 40px;
+            font-size: 32px;
+            font-weight: 600;
+        }
+
+        /* Button Styles */
+        #loadEvents, #proceedBtn {
+            padding: 16px 32px;
+            font-size: 18px;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
+            margin: 20px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            background-color: #d8c3a5;
+            color: #5a4e42;
+        }
+
+        #loadEvents {
+            background-color: #d8c3a5;
+        }
+
+        #proceedBtn {
+            background-color: #8a7f7d;
+            color: white;
         }
 
         #proceedBtn:disabled {
-            background-color: gray;
+            background-color: #b7a99a;
             cursor: not-allowed;
+        }
+
+        #loadEvents:hover, #proceedBtn:hover {
+            background-color: #b29e81;
+            transform: scale(1.05);
+        }
+
+        /* Table Styles */
+        table {
+            width: 90%;
+            margin: 40px auto;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 16px;
+            text-align: left;
+            border: 1px solid #ddd;
+            font-size: 18px;
+        }
+
+        th {
+            background-color: #d8c3a5;
+            color: #5a4e42;
+            font-size: 20px;
+        }
+
+        /* Table Row Hover Effect */
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Proceed Button Container */
+        .proceed-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        /* Additional Styles for Mobile Responsiveness */
+        @media screen and (max-width: 768px) {
+            table {
+                width: 100%;
+                font-size: 16px;
+            }
+
+            #loadEvents, #proceedBtn {
+                width: 100%;
+                padding: 18px;
+                font-size: 20px;
+            }
         }
     </style>
 </head>
@@ -36,7 +115,7 @@
     <h2>Event Listings</h2>
     <button id="loadEvents">Load Events</button>
 
-    <table border="1">
+    <table>
         <thead>
             <tr>
                 <th>CheckBox</th>
@@ -86,7 +165,7 @@
 
                     data.forEach(event => {
                         let row = document.createElement("tr");
-                        row.innerHTML = `
+                        row.innerHTML = `  
                             <td><input type="checkbox" class="eventCheckbox" value="${event.id}"></td>
                             <td>${event.id}</td>  
                             <td>${event.event_name}</td>
